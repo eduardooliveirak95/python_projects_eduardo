@@ -1,28 +1,26 @@
-# Smart Password Generator CLI + KeePass Integration
+# Smart Password Generator CLI 🔐
 
-A professional command-line tool to generate strong, customizable passwords based on keywords and save them directly into a KeePass database. Ideal for developers, security enthusiasts, and anyone who wants secure password management from the terminal.
-
----
-
-# Features
-
-- Generate strong, human-readable passwords  
-- Customize password length  
-- Base passwords on a keyword (e.g., site, app, or personal hint)  
-- CLI with automatic prompts for easy use  
-- Directly save passwords into KeePass (.kdbx)  
-- Secure random generation using Python’s `secrets`  
-- Modular, clean, and portfolio-ready code  
+A professional command-line interface (CLI) tool built with Python to generate high-entropy, customizable passwords. This project features direct integration with **KeePass (.kdbx)** databases, allowing you to secure your credentials immediately after generation.
 
 ---
 
-# Installation
+## ✨ Features
 
-1. Clone the repository:
+- **Keyword-Based Generation**: Create passwords based on a specific hint or service name.
+- **High Security**: Uses Python's `secrets` module for cryptographically strong random numbers.
+- **KeePass Integration**: Automatically save your new passwords into an existing `.kdbx` database.
+- **Customizable Complexity**: Adjust password length and character sets to meet any security requirement.
+- **User-Friendly CLI**: Interactive prompts for a seamless terminal experience.
 
-```bash
-git clone <your-repo-url>
-cd password-generator-cli
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+* Python 3.8 or higher
+* A KeePass database (optional, for saving passwords)
+
 
 INSTALL DEPENDENCIES (IMPORTANT):
 
