@@ -3,29 +3,29 @@ import secrets
 import argparse
 from pykeepass import PyKeePass
 
-# ---------------- Password Generator ----------------
+#pass gen begin
 def generate_password(base_word="", length=12):
     substitutions = {'a': '@', 's': '$', 'o': '0', 'i': '1', 'e': '3'}
     base_word = base_word.strip()
     transformed = "".join(substitutions.get(c.lower(), c) for c in base_word)
     
-    # Capitaliza a primeira letra
+    #primeira letra maiscula
     password = list(transformed.capitalize())
     
-    # Caracteres extras
+    #caractertes extra
     characters = string.ascii_letters + string.digits + string.punctuation
     
-    # Completa até ao tamanho desejado
+    #completar com numero de caracteres introduzido 
     while len(password) < length:
         password.append(secrets.choice(characters))
     
-    # Baralha apenas a parte extra
+    #baralhar
     extra_part = password[len(transformed):]
     secrets.SystemRandom().shuffle(extra_part)
     final_password = password[:len(transformed)] + extra_part
     return ''.join(final_password)
 
-# ---------------- KeePass Integration ----------------
+# integrar com keepass
 def save_to_keepass(kdbx_file, kdbx_password, entry_title, username, password):
     try:
         kp = PyKeePass(kdbx_file, password=kdbx_password)
@@ -36,7 +36,7 @@ def save_to_keepass(kdbx_file, kdbx_password, entry_title, username, password):
         print(f"[!] Error opening KeePass: {e}")
         return
 
-    # Procura entrada existente pelo título e username
+    #procura entradas existentes
     existing_entry = kp.find_entries(title=entry_title, username=username, first=True)
     
     if existing_entry:
@@ -48,7 +48,7 @@ def save_to_keepass(kdbx_file, kdbx_password, entry_title, username, password):
 
     kp.save()
 
-# ---------------- CLI / Prompts ----------------
+#prompts do cli
 def main():
     parser = argparse.ArgumentParser(description="🔐 Password Generator + KeePass CLI")
     
@@ -61,7 +61,7 @@ def main():
     
     args = parser.parse_args()
 
-    # Prompts se não houver argumentos
+    #prompts se nao houver arguments
     if args.length is None:
         args.length = int(input("Tamanho da password (default 12): ") or 12)
     if args.base is None:
