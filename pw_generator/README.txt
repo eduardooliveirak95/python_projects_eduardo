@@ -12,8 +12,8 @@ A professional command-line interface (CLI) tool built with Python to generate h
 
 ### Prerequisites
 
-* Python 3.8 or higher
-* A KeePass database (optional, for saving passwords)
+-Python 3.8 or higher
+-A KeePass database (optional, for saving passwords)
 
 
 ###INSTALL DEPENDENCIES (IMPORTANT):
