@@ -4,7 +4,7 @@ A professional command-line tool to generate strong, customizable passwords base
 
 ---
 
-## ⚡ Features
+# Features
 
 - Generate strong, human-readable passwords  
 - Customize password length  
@@ -16,7 +16,7 @@ A professional command-line tool to generate strong, customizable passwords base
 
 ---
 
-## Installation
+# Installation
 
 1. Clone the repository:
 
@@ -24,7 +24,7 @@ A professional command-line tool to generate strong, customizable passwords base
 git clone <your-repo-url>
 cd password-generator-cli
 
-Install dependencies:
+INSTALL DEPENDENCIES (IMPORTANT):
 
 py -m pip install --upgrade pip
 pip install -r requirements.txt
