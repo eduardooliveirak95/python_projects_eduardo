@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PassForge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --accent3: #f59e0b;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --success: #10b981;
+      --error: #ef4444;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow blobs */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(124,58,237,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 680px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 0 24px rgba(124,58,237,0.4);
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .card:nth-child(2) { animation-delay: 0.05s; }
+    .card:nth-child(3) { animation-delay: 0.1s; }
+
+    .card-title {
+      font-size: 0.7rem;
+      font-family: var(--mono);
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Form */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 500px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    label {
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="password"] {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+    }
+
+    input::placeholder { color: var(--muted); opacity: 0.5; }
+
+    /* Range slider */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(124,58,237,0.5);
+      transition: transform 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+    .slider-val {
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      color: var(--accent2);
+      min-width: 28px;
+      text-align: right;
+    }
+
+    /* Password output */
+    .pwd-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 52px;
+    }
+
+    .pwd-text {
+      font-family: var(--mono);
+      font-size: 1rem;
+      color: var(--accent3);
+      letter-spacing: 0.05em;
+      word-break: break-all;
+      flex: 1;
+    }
+
+    .pwd-placeholder {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      opacity: 0.5;
+    }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.35rem 0.6rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    /* Strength bar */
+    .strength-bar-wrap {
+      margin-top: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .strength-bar {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .strength-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.4s ease, background 0.4s ease;
+      width: 0%;
+    }
+
+    .strength-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      min-width: 50px;
+      text-align: right;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.4rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.02em;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.2s;
+    }
+
+    .btn:hover::after { background: rgba(255,255,255,0.06); }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #9333ea);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+    }
+
+    .btn-primary:hover { box-shadow: 0 6px 28px rgba(124,58,237,0.5); }
+
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(16,185,129,0.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1.4rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text);
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      max-width: 90vw;
+      white-space: nowrap;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #toast.success { border-color: var(--success); color: var(--success); }
+    #toast.error { border-color: var(--error); color: var(--error); }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    /* Divider */
+    .divider {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin: 0.5rem 0;
+      letter-spacing: 0.1em;
+    }
+
+    /* Animations */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes pwdReveal {
+      from { opacity: 0; letter-spacing: 0.3em; }
+      to   { opacity: 1; letter-spacing: 0.05em; }
+    }
+
+    .pwd-animate { animation: pwdReveal 0.4s ease both; }
+
+    /* Status dot */
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+      box-shadow: 0 0 8px var(--success);
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🔐</div>
+      <h1>PassForge</h1>
+    </div>
+    <p class="tagline">Gerador de Passwords + KeePass Integration</p>
+  </header>
+
+  <!-- Card 1: Gerador -->
+  <div class="card">
+    <div class="card-title">⚙️ Configuração</div>
+
+    <div class="grid-2" style="margin-bottom:1rem">
+      <div class="field">
+        <label>Palavra Base (opcional)</label>
+        <input type="text" id="base" placeholder="ex: amazon" />
+      </div>
+      <div class="field">
+        <label>Tamanho: <span id="lenVal" style="color:var(--accent2)">16</span></label>
+        <div class="slider-row">
+          <input type="range" id="length" min="4" max="64" value="16"
+                 oninput="document.getElementById('lenVal').textContent=this.value" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-top:1.2rem">🔑 Password Gerada</div>
+
+    <div class="pwd-box">
+      <span class="pwd-placeholder" id="pwdDisplay">Clica em "Gerar" para criar uma password</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyPassword()" style="display:none">📋 Copiar</button>
+    </div>
+
+    <div class="strength-bar-wrap" id="strengthWrap" style="display:none">
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <span class="strength-label" id="strengthLabel"></span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="genBtn" onclick="generatePassword()">⚡ Gerar Password</button>
+      <button class="btn btn-secondary" onclick="clearAll()">✕ Limpar</button>
+    </div>
+  </div>
+
+  <!-- Card 2: KeePass -->
+  <div class="card" style="animation-delay:0.1s">
+    <div class="card-title">🗄️ Guardar no KeePass</div>
+
+    <div class="grid-2" style="margin-bottom:1rem">
+      <div class="field">
+        <label>Título (site/app)</label>
+        <input type="text" id="title" placeholder="ex: GitHub" />
+      </div>
+      <div class="field">
+        <label>Username / Email</label>
+        <input type="text" id="username" placeholder="ex: joao@email.com" />
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Ficheiro .kdbx</label>
+        <input type="text" id="kdbxFile" placeholder="ex: /home/user/passwords.kdbx" />
+      </div>
+      <div class="field">
+        <label>Password do KeePass</label>
+        <input type="password" id="kdbxPass" placeholder="••••••••" />
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-save" id="saveBtn" onclick="saveToKeepass()" disabled>
+        💾 Guardar no KeePass
+      </button>
+    </div>
+
+    <div class="divider" style="margin-top:1rem">— ou gerar e guardar de uma vez —</div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="generateAndSave()">⚡💾 Gerar e Guardar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast">
+  <span id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+  const API = 'http://localhost:5000';
+  let currentPassword = '';
+
+  async function generatePassword() {
+    const btn = document.getElementById('genBtn');
+    btn.innerHTML = '<span class="spinner"></span>A gerar...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API}/generate`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          base: document.getElementById('base').value,
+          length: document.getElementById('length').value
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      currentPassword = data.password;
+      showPassword(data.password);
+      document.getElementById('saveBtn').disabled = false;
+      showToast('Password gerada com sucesso!', 'success');
+    } catch (e) {
+      showToast(e.message || 'Erro ao ligar ao servidor', 'error');
+    } finally {
+      btn.innerHTML = '⚡ Gerar Password';
+      btn.disabled = false;
+    }
+  }
+
+  async function saveToKeepass() {
+    if (!currentPassword) { showToast('Gera primeiro uma password!', 'error'); return; }
+    if (!validateKeepassFields()) return;
+
+    const btn = document.getElementById('saveBtn');
+    btn.innerHTML = '<span class="spinner"></span>A guardar...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API}/save`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          password: currentPassword,
+          title: document.getElementById('title').value,
+          username: document.getElementById('username').value,
+          kdbx_file: document.getElementById('kdbxFile').value,
+          kdbx_password: document.getElementById('kdbxPass').value
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      showToast(data.message, 'success');
+    } catch (e) {
+      showToast(e.message || 'Erro ao guardar', 'error');
+    } finally {
+      btn.innerHTML = '💾 Guardar no KeePass';
+      btn.disabled = false;
+    }
+  }
+
+  async function generateAndSave() {
+    if (!validateKeepassFields()) return;
+
+    const btn = event.target;
+    btn.innerHTML = '<span class="spinner"></span>A processar...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API}/generate-and-save`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          base: document.getElementById('base').value,
+          length: document.getElementById('length').value,
+          title: document.getElementById('title').value,
+          username: document.getElementById('username').value,
+          kdbx_file: document.getElementById('kdbxFile').value,
+          kdbx_password: document.getElementById('kdbxPass').value
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      currentPassword = data.password;
+      showPassword(data.password);
+      document.getElementById('saveBtn').disabled = false;
+      showToast(data.message, 'success');
+    } catch (e) {
+      showToast(e.message || 'Erro ao ligar ao servidor', 'error');
+    } finally {
+      btn.innerHTML = '⚡💾 Gerar e Guardar';
+      btn.disabled = false;
+    }
+  }
+
+  function showPassword(pwd) {
+    const disp = document.getElementById('pwdDisplay');
+    disp.className = 'pwd-text pwd-animate';
+    disp.textContent = pwd;
+
+    document.getElementById('copyBtn').style.display = 'inline-flex';
+    document.getElementById('strengthWrap').style.display = 'flex';
+
+    // Força re-trigger da animação
+    void disp.offsetWidth;
+    disp.classList.remove('pwd-animate');
+    void disp.offsetWidth;
+    disp.classList.add('pwd-animate');
+
+    updateStrength(pwd);
+  }
+
+  function updateStrength(pwd) {
+    let score = 0;
+    if (pwd.length >= 12) score++;
+    if (pwd.length >= 16) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    const fill = document.getElementById('strengthFill');
+    const label = document.getElementById('strengthLabel');
+    const pct = (score / 5) * 100;
+
+    const colors = ['#ef4444','#f59e0b','#f59e0b','#10b981','#10b981'];
+    const labels = ['Fraca','Razoável','Boa','Forte','Muito Forte'];
+
+    fill.style.width = pct + '%';
+    fill.style.background = colors[score - 1] || '#ef4444';
+    label.textContent = labels[score - 1] || 'Fraca';
+    label.style.color = colors[score - 1] || '#ef4444';
+  }
+
+  function copyPassword() {
+    if (!currentPassword) return;
+    navigator.clipboard.writeText(currentPassword).then(() => {
+      showToast('Password copiada! ✓', 'success');
+    });
+  }
+
+  function clearAll() {
+    currentPassword = '';
+    const disp = document.getElementById('pwdDisplay');
+    disp.className = 'pwd-placeholder';
+    disp.textContent = 'Clica em "Gerar" para criar uma password';
+    document.getElementById('copyBtn').style.display = 'none';
+    document.getElementById('strengthWrap').style.display = 'none';
+    document.getElementById('saveBtn').disabled = true;
+    ['base','title','username','kdbxFile','kdbxPass'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  }
+
+  function validateKeepassFields() {
+    const required = [
+      ['title', 'Título'],
+      ['username', 'Username'],
+      ['kdbxFile', 'Ficheiro .kdbx'],
+      ['kdbxPass', 'Password do KeePass']
+    ];
+    for (const [id, name] of required) {
+      if (!document.getElementById(id).value.trim()) {
+        showToast(`Campo obrigatório: ${name}`, 'error');
+        document.getElementById(id).focus();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function showToast(msg, type = '') {
+    const toast = document.getElementById('toast');
+    const icons = { success: '✓', error: '✗' };
+    document.getElementById('toastIcon').textContent = icons[type] || 'ℹ';
+    document.getElementById('toastMsg').textContent = msg;
+    toast.className = `show ${type}`;
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { toast.className = ''; }, 3500);
+  }
+</script>
+</body>
+</html>
