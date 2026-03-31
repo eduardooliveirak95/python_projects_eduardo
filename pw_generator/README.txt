@@ -1,22 +1,84 @@
-# Smart Password Generator CLI
+=====================================
+  Password Generator
+=====================================
 
-A professional command-line interface (CLI) tool built with Python to generate high-entropy, customizable passwords. This project features direct integration with **KeePass (.kdbx)** databases, allowing you to secure your credentials immediately after generation.
-
-## Features
-
-- **Keyword-Based Generation**: Create passwords based on a specific hint or service name.
-- **High Security**: Uses Python's `secrets` module for cryptographically strong random numbers.
-- **KeePass Integration**: Automatically save your new passwords into an existing `.kdbx` database.
-- **Customizable Complexity**: Adjust password length and character sets to meet any security requirement.
-- **User-Friendly CLI**: Interactive prompts for a seamless terminal experience.
-
-### Prerequisites
-
--Python 3.8 or higher
--A KeePass database (optional, for saving passwords)
+A password generator with KeePass integration.
+Generates secure passwords and saves them directly to a .kdbx database.
 
 
-###INSTALL DEPENDENCIES (IMPORTANT):
+-------------------------------------
+  REQUIREMENTS
+-------------------------------------
 
-py -m pip install --upgrade pip
-pip install -r requirements.txt
+- Python 3.8 or higher
+- A KeePass .kdbx file (optional, only needed to save passwords)
+
+
+-------------------------------------
+  INSTALL
+-------------------------------------
+
+py -m pip install -r requirements.txt
+
+
+-------------------------------------
+  HOW TO RUN
+-------------------------------------
+
+1. Start the backend:
+   py app.py
+
+2. Open index.html in your browser.
+
+Leave the terminal open while using the app.
+
+
+-------------------------------------
+  HOW TO USE
+-------------------------------------
+
+1. Enter a base word (optional), e.g. "amazon"
+2. Adjust the length slider (4-64 characters)
+3. Click "Gerar Password"
+4. Fill in the KeePass fields if you want to save it
+5. Click "Guardar" or "Gerar e Guardar" to do both at once
+
+
+-------------------------------------
+  BASE WORD SUBSTITUTIONS
+-------------------------------------
+
+  a -> @
+  s -> $
+  o -> 0
+  i -> 1
+  e -> 3
+
+Example: "amazon" becomes "Am@z0n..." + random characters
+
+
+-------------------------------------
+  TROUBLESHOOTING
+-------------------------------------
+
+"pip not recognized"
+  -> Use: py -m pip install -r requirements.txt
+
+"py not recognized"
+  -> Use: python -m pip install -r requirements.txt
+
+"Cannot connect to server"
+  -> Make sure app.py is running before opening the page
+
+"KeePass file not found"
+  -> Use the full path, e.g. C:\Users\you\passwords.kdbx
+
+
+-------------------------------------
+  FILES
+-------------------------------------
+
+  app.py           - Flask backend (API)
+  index.html       - Web interface
+  requirements.txt - Python dependencies
+  README.txt       - This file
